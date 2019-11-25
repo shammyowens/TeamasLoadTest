@@ -103,3 +103,4 @@ https://github.com/ritaly/README-cheatsheet
 ## Contact
 Created by [@shammyowens](https://www.twitter.com/shammyowens)
 [Teamas Blog](https://www.teamas.co.uk)
+[If this has been useful, feel free to buy me a coffee :-)](https://ko-fi.com/shammyowens)
