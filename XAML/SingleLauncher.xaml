@@ -1,0 +1,48 @@
+<Window x:Class="LoadTest.MainWindow"
+        Topmost="True"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LoadTest"
+        mc:Ignorable="d"
+        Title="Control Script Single Launcher" Height="544.724" Width="810.00">
+    <Grid Margin="0,0,2,1">
+        <TextBox Name="textVDAs" HorizontalAlignment="Left" Height="23" Margin="20,31,0,0" TextWrapping="Wrap" Text="vda1" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textUsers" HorizontalAlignment="Left" Height="23" Margin="20,80,0,0" TextWrapping="Wrap" Text="user01 user02 user03" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <PasswordBox Name="pwPassword" HorizontalAlignment="Left" Margin="20,128,0,0" VerticalAlignment="Top" Width="302" Height="23" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textDomain" HorizontalAlignment="Left" Height="23" Margin="20,177,0,0" TextWrapping="Wrap" Text="Contoso" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textDesktop" HorizontalAlignment="Left" Height="23" Margin="20,226,0,0" TextWrapping="Wrap" Text="Desktop" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textStorefrontURL" HorizontalAlignment="Left" Height="23" Margin="20,275,0,0" TextWrapping="Wrap" Text="https://storefront.contoso.com/Citrix/StorefrontWeb/" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name ="textDelay" HorizontalAlignment="Left" Height="23" Margin="20,324,0,0" TextWrapping="Wrap" Text="90" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name ="textFileShare" HorizontalAlignment="Left" Height="23" Margin="20,373,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+<!--<Button Name ="buttonFileShare" Content="..." HorizontalAlignment="Left" Height="23" Margin="327,373,0,0" VerticalAlignment="Top" Width="27"/>-->
+        <TextBox Name ="textWorkload" HorizontalAlignment="Left" Height="23" Margin="20,422,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <Button Name="buttonWorkload" Content="..." HorizontalAlignment="Left" Height="23" Margin="327,422,0,0" VerticalAlignment="Top" Width="27"/>
+        <CheckBox Name="checkPerfmon" Content="Collect Perfmon?" HorizontalAlignment="Left" Margin="20,466,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5"/>
+        <Label Content="Usernames (separated by a space)" HorizontalAlignment="Left" Margin="20,54,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        <Label Content="VDA names (separated by a space)" HorizontalAlignment="Left" Margin="20,5,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        <Label Content="App or Desktop name" HorizontalAlignment="Left" Margin="20,200,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        <Label Content="Password" HorizontalAlignment="Left" Margin="20,102,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        <Label Content="Domain name" HorizontalAlignment="Left" Margin="20,151,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        <Label Content="Storefront URL" HorizontalAlignment="Left" Margin="20,249,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        <Button Name="buttonStart" Content="Start Test" HorizontalAlignment="Left" Margin="380,461,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
+        <Button Name="buttonStop" Content="Stop Test" HorizontalAlignment="Left" Margin="468,461,0,0" VerticalAlignment="Top" Width="75" Height="25" Visibility="Hidden" />
+        <ListView Name="listViewSessions" HorizontalAlignment="Left" Height="297" Margin="380,148,0,0" VerticalAlignment="Top" Width="404">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Username" Width="100" DisplayMemberBinding ="{Binding Username}"/>
+                    <GridViewColumn Header="Login Time" Width="200" DisplayMemberBinding ="{Binding LoginTime}"/>
+                    <GridViewColumn Header="Server" Width="100" DisplayMemberBinding ="{Binding Server}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ProgressBar Name="pbProgress" HorizontalAlignment="Left" Height="23" Margin="380,104,0,0" VerticalAlignment="Top" Width="404"/>
+        <Label Content="Launch Session Delay (seconds)" HorizontalAlignment="Left" Margin="20,298,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        <Label Content="Current Status" HorizontalAlignment="Left" Margin="380,28,0,0" VerticalAlignment="Top" Width="404" Height="23"/>
+        <Label Name="labelTestRunning" Content="No Active Test" HorizontalAlignment="Left" Margin="380,54,0,0" VerticalAlignment="Top" Width="170"/>
+        <Label Name="labelDuration" Content="" HorizontalAlignment="Left" Margin="541,54,0,0" VerticalAlignment="Top" Width="105"/>
+        <Label Content="File Share" HorizontalAlignment="Left" Margin="20,347,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        <Label Content="Workload Script" HorizontalAlignment="Left" Margin="20,396,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+    </Grid>
+</Window>
