@@ -34,7 +34,7 @@ I completed a presentation at the Winter 2019 UK Citrix User Group.  A copy of t
 * Colourloop - version 1.0 - This is a PowerShell script return RGB values for a pixel and loop.  Useful for building workload scripts when page is refreshes.
 
 ## Setup
-* Create a file share and copy the contents of this project in at the root.  Ensure the test users can write to the root of the share and to the errors folder (this is for the endtest.txt signaller file and to copy error screenshots)
+* Create a file share and copy the contents of this project in at the root.  Ensure the test users can write to the status and errors folders (this is for the endtest.txt signaller file and to copy error screenshots)
 
 * Copy the workload.ps1 script and amend the Initialize-Test and Start-Test functions to complete whatever workloads you want to run.
 
@@ -55,7 +55,7 @@ Apart from
 * Fileshare is picked up from the launched location
 
 ### Multi Launcher
-For Multi Launcher, login to launcher VMs (need Citrix Receiver/Workspace installed) and run the scripts\startlauncher.ps1 file.  This will ask for the password for the test user account.  It will then loop until test started.  From a controller machine, run control-multilauncher.ps1 and enter the relevant information.  Click Start Test.
+For Multi Launcher, login to launcher VMs (need Citrix Receiver/Workspace installed) and run the scripts\startlauncher.ps1 file.  This will ask for the password for the test user accounts.  It will then loop until test started.  From a controller machine, run control-multilauncher.ps1 and enter the relevant information.  Click Start Test.
 
 This will create some files in the status folder.  The launchers will check this folder and begin the test.
 
