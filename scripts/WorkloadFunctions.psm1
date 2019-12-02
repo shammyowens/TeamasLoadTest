@@ -138,7 +138,7 @@ Do{
     if ($checker -eq $retryTime -and $inputtype -eq "click"){pop-mousebutton}
     if ($checker -eq $retryTime -and $inputtype -eq "enter"){$wshell.SendKeys('~')}
     if ($checker -gt $failTime){$global:errorcount ++
-                          debug-error
+                          debug-error -processes $global:processes
                           }
    }
 Until($result.red -eq $red -and $result.green -eq $green -and $result.blue -eq $blue)
@@ -248,7 +248,7 @@ Logoff}
 }
 
 Function debug-error
-{
+{param([string]$processes="chrome")
 
     exit-session
     $date = (Get-Date -format filedatetime)
@@ -260,8 +260,7 @@ Function debug-error
                             }
     Else{
             
-            get-process -name chrome  -ErrorAction SilentlyContinue | Where-Object {$_.CPU} | stop-process
-            get-process -name notepad -ErrorAction SilentlyContinue | Where-Object {$_.CPU} | stop-process
+            foreach($procs in $processes){get-process -name $proc -ErrorAction SilentlyContinue | Where-Object {$_.CPU} | stop-process}
             start-test
             }
 }
