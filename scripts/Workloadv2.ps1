@@ -2,7 +2,7 @@
 
 Add-Type -AssemblyName System.Windows.Forms
 $wshell = New-Object -ComObject wscript.shell;
-
+$global:processes = ("Chrome, Notepad")
 $filestore = "FILESERVER"
 Import-Module "$filestore\scripts\WorkloadFunctions.psm1"
 $retryTime = 30
@@ -78,8 +78,7 @@ Do {
 
                             initialize-sleep -seconds 4 -texttodisplay "pausing before restarting"
 
-                            get-process -name chrome | Where-Object {$_.CPU} | stop-process
-                            get-process -name notepad | Where-Object {$_.CPU} | stop-process
+                            foreach($procs in $global:processes){get-process -name $procs -ErrorAction SilentlyContinue | Where-Object {$_.CPU} | stop-process}
 
     }
 Until ($global:testend -eq "$True")
