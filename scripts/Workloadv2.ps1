@@ -2,7 +2,7 @@
 
 Add-Type -AssemblyName System.Windows.Forms
 $wshell = New-Object -ComObject wscript.shell;
-$bounds = [Drawing.Rectangle]::FromLTRB(0, 0, 1900, 800)
+
 $filestore = "FILESERVER"
 Import-Module "$filestore\scripts\WorkloadFunctions.psm1"
 $retryTime = 30
