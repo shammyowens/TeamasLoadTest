@@ -62,6 +62,11 @@ Function Get-Window
 Function Get-Screenie([Drawing.Rectangle]$bounds, $path) 
 {
 
+    Add-Type -AssemblyName System.Windows.Forms
+    $width = [System.Windows.Forms.Screen]::AllScreens.workingarea.width
+    $height = [System.Windows.Forms.Screen]::AllScreens.workingarea.height
+    $bounds = [Drawing.Rectangle]::FromLTRB(0, 0, $width, $height)
+    
    $bmp = New-Object Drawing.Bitmap $bounds.width, $bounds.height
    $graphics = [Drawing.Graphics]::FromImage($bmp)
 
