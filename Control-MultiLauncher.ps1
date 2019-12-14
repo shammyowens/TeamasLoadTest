@@ -131,7 +131,9 @@ Function publish-test{
    
 Try{
     ((Get-Content -path $filestore\scripts\start.bat) -replace "FILESERVER",$script:Workload) | Set-Content -Path $filestore\scripts\start.bat -ErrorAction Stop
+    ((Get-Content -path $filestore\scripts\WorkloadFunctions.psm1) -replace "FILESERVER",$filestore) | Set-Content -Path $filestore\scripts\WorkloadFunctions.psm1 -ErrorAction Stop
     ((Get-Content -path $script:Workload) -replace "FILESERVER",$filestore) | Set-Content -Path $script:Workload -ErrorAction Stop
+    
    }
 Catch
     {[System.Windows.Forms.MessageBox]::Show("Cannot Amend workload files")
@@ -177,7 +179,7 @@ foreach($user in $script:users){
                             }
 
 $launch | export-csv "$script:filestore\status\startTest.csv" -NoTypeInformation
-foreach($server in $script:Launchers){new-item -Path "$script:filestore\status\$server.txt"}
+#foreach($server in $script:Launchers){new-item -Path "$script:filestore\status\$server.txt"}
 
 
 }
@@ -210,6 +212,7 @@ Function unpublish-test {Param([string]$date)
     new-Item -path $filestore\status\endtest.txt -ItemType File
     remove-item $script:filestore\status\starttest.csv
     remove-item $script:filestore\status\templaunch.csv
+    foreach($server in $script:Launchers){remove-item -Path "$script:filestore\status\$server.txt"}
 
     sleep $script:delay
     Foreach($server in $script:VDAs){
@@ -225,6 +228,7 @@ Function unpublish-test {Param([string]$date)
     $replace = $filestore -replace "\\","\\"
     $replaceWL = $script:workload -replace "\\","\\"
     ((Get-Content -path $filestore\scripts\start.bat) -replace $replaceWL,"FILESERVER") | Set-Content -Path $filestore\scripts\start.bat -ErrorAction Stop
+    ((Get-Content -path $filestore\scripts\workloadfunctions.psm1) -replace $replace,"FILESERVER") | Set-Content -Path $filestore\scripts\workloadfunctions.psm1 -ErrorAction Stop
     ((Get-Content -path $script:workload) -replace $replace,"FILESERVER") | Set-Content -Path $script:workload -ErrorAction Stop
 
    Get-Runspace -name "progressbar" | ForEach-Object {$_.dispose()}
@@ -248,6 +252,22 @@ Function unpublish-test {Param([string]$date)
     Exit
     }
    
+   #Look for Launcher Files
+
+   update-window -Control labelTestRunning -Property Content -Value "Checking Launchers"
+   
+   Foreach ($launcher in $script:Launchers)
+            {
+                Do{ 
+                    if(($launcherReady = (test-path $script:FileStore\status\$launcher.txt)) -eq $True)
+                    {$readyLaunchers ++}
+
+                    }
+                
+   Until($launcherReady -eq $True )
+            }          
+    #Test Started
+
     If($script:perfmon -eq $true){
     #region Perfmon
             $x+= "."
@@ -290,7 +310,7 @@ Function unpublish-test {Param([string]$date)
         $newRunspace.SessionStateProxy.SetVariable("UserCount",$Script:Users.count) 
         $PowerShell = [PowerShell]::Create().AddScript({
 
- $totalSeconds = ($Delay + 10) * $UserCount
+ $totalSeconds = ($Delay + 15) * $UserCount
  $percentPerSecond = 100 / $totalseconds
  $endTime = (Get-Date).AddSeconds($totalSeconds)
 
@@ -442,9 +462,10 @@ return $users
    Do
    
    {$isFinished = Get-Content "$filestore\status\currentstate.txt"
+    $earlyFinish = test-path "$filestore\status\endtest.txt"
         Start-Sleep 5
    }
-   Until($isFinished.count -eq $script:launchers.count)
+   Until($isFinished.count -eq $script:launchers.count -or $earlyfinish -eq $True)
 
    unpublish-test               
 
@@ -491,6 +512,7 @@ Function unpublish-test {Param([string]$date)
     new-Item -path $filestore\status\endtest.txt -ItemType File
     remove-item $script:filestore\status\starttest.csv
     remove-item $script:filestore\status\templaunch.csv
+    foreach($server in $script:Launchers){remove-item -Path "$script:filestore\status\$server.txt"}
 
    update-window -control buttonStart -property Visibility -value "Visible"
    update-window -control buttonStop -property Visibility -value "Hidden"
@@ -511,6 +533,7 @@ Function unpublish-test {Param([string]$date)
     $replace = $filestore -replace "\\","\\"
     $replaceWL = $script:workload -replace "\\","\\"
     ((Get-Content -path $filestore\scripts\start.bat) -replace $replaceWL,"FILESERVER") | Set-Content -Path $filestore\scripts\start.bat -ErrorAction Stop
+    ((Get-Content -path $filestore\scripts\workloadfunctions.psm1) -replace $replace,"FILESERVER") | Set-Content -Path $filestore\scripts\workloadfunctions.psm1 -ErrorAction Stop
     ((Get-Content -path $script:workload) -replace $replace,"FILESERVER") | Set-Content -Path $script:workload -ErrorAction Stop
    
    Get-Runspace -name "perfmon" | ForEach-Object {$_.dispose()}
@@ -574,5 +597,5 @@ $psCmd.Runspace = $newRunspace
 $data = $psCmd.BeginInvoke()
 
 #this is a hacky way of keeping the GUI open when run from Console
-do{$something = 0}
-until($something -eq 1)
+#do{$something = 0}
+#until($something -eq 1)

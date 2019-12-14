@@ -1,7 +1,9 @@
-#region basicFunctions
+$filestore = "FILESERVER"
+$retryTime = 10
+$failTime = 20
 
 #https://gallery.technet.microsoft.com/scriptcenter/Get-the-position-of-a-c91a5f1f
-Function Get-Window 
+Function global:Get-Window 
 {
     [OutputType('System.Automation.WindowInfo')]
     [cmdletbinding()]
@@ -59,7 +61,7 @@ Function Get-Window
 }
 
 #https://stackoverflow.com/questions/2969321/how-can-i-do-a-screen-capture-in-windows-powershell
-Function Get-Screenie([Drawing.Rectangle]$bounds, $path) 
+function global:Get-Screenie($path) 
 {
 
     Add-Type -AssemblyName System.Windows.Forms
@@ -79,7 +81,7 @@ Function Get-Screenie([Drawing.Rectangle]$bounds, $path)
 }
 
 #https://community.spiceworks.com/scripts/show/4263-get-screencolor
-Function Get-ScreenColor 
+function global:Get-ScreenColor 
 {
 
     [CmdletBinding(DefaultParameterSetName='None')]
@@ -125,72 +127,8 @@ Function Get-ScreenColor
     return $result
 }
 
-Function Trace-Colour
-{param([string]$x,[int]$y,[int]$red,[int]$green,[int]$blue,[string]$inputtype)
-$checker = 0
-
-Do{
-    $result = Get-ScreenColor -x $x -y $y
-    Start-Sleep -milliseconds 500
-    $checker = $checker + 0.5
-    $global:labelTime.text =  "$checker seconds" 
-    $global:form.Refresh()
-    if ($checker -eq $retryTime -and $inputtype -eq "click"){pop-mousebutton}
-    if ($checker -eq $retryTime -and $inputtype -eq "enter"){$wshell.SendKeys('~')}
-    if ($checker -gt $failTime){$global:errorcount ++
-                          debug-error -processes $global:processes
-                          }
-   }
-Until($result.red -eq $red -and $result.green -eq $green -and $result.blue -eq $blue)
-
-}
-
-Function Initialize-Sleep
-{param([int]$seconds,[string]$texttodisplay)
-
-$global:labeltask.text = "$texttodisplay for"
-$global:labelTime.text = "$seconds seconds"
-$global:form.Refresh()
-Start-Sleep $seconds
-}
-
-Function Write-Logtime
-{param([TimeSpan]$time,[string]$taskname)
-    $users = query user
-    $userscount = ($users.count - 1)
-    $timeinsecs=[math]::Round($time.totalseconds / 1.00,2)
-    $TimeAdd = New-Object PSObject -property @{action=$taskname;Duration=$timeinsecs;username=$env:username;Time=Get-Date;Users=$userscount}
-    $TimeAdd | export-csv c:\temp\timing.csv -Append -NoTypeInformation
-}
-
-Function Start-Task
-{param([string]$labeltext,[string]$taskname,[int]$x,[int]$y,[int]$red,
-       [int]$green,[int]$blue,[string]$inputtype,[string]$cursorpos,
-       [int]$sleep,[string]$collecttime,[string]$checkcolour)
-
-                            $global:labeltask.text =  $labeltext
-                            $global:form.Refresh()
-                            
-                            $time = Measure-Command{
-                                                            if($inputtype -eq "click"){ 
-                                                                                        [Windows.Forms.Cursor]::position = $cursorpos
-                                                                                        pop-mousebutton
-                                                                                        }
-                                                            if($inputtype -eq "enter"){$wshell.SendKeys('~')}
-                                                            Start-Sleep 1
-                                                            if($checkcolour -ne "No")
-                                                            {
-                                                            trace-colour -x $x -y $y -red $red -green $green -blue $blue -inputtype $inputtype}
-                                                            }
-                            if ($Collecttime -eq "yes"){
-                                                        write-logtime -time $time -taskname $taskname
-                                                        }
-                            initialize-sleep -seconds $sleep -texttodisplay "Thinking" 
-                            exit-session
-}
-
 #https://stackoverflow.com/questions/42566799/how-to-bring-focus-to-window-by-process-name/42567337#42567337
-Function Set-WindowFocus 
+function global:Set-WindowFocus 
 {param([string] $proc="chrome", [string]$adm)
 Clear-Host
 
@@ -223,7 +161,7 @@ else
 }}
 
 #https://social.technet.microsoft.com/Forums/en-US/48f12259-213c-43a5-99fa-5814928b0145/mouse-click?forum=winserverpowershell
-Function Pop-MouseButton
+function global:Pop-MouseButton
 {
 exit-session
     $signature=@' 
@@ -237,7 +175,71 @@ exit-session
         $SendMouseClick::mouse_event(0x00000004, 0, 0, 0, 0);
 }
 
-Function exit-session
+function global:Trace-Colour
+{param([string]$x,[int]$y,[int]$red,[int]$green,[int]$blue,[string]$inputtype)
+$checker = 0
+
+Do{
+    $result = Get-ScreenColor -x $x -y $y
+    Start-Sleep -milliseconds 500
+    $checker = $checker + 0.5
+    $global:labelTime.text =  "$checker seconds" 
+    $global:form.Refresh()
+    if ($checker -eq $retryTime -and $inputtype -eq "click"){pop-mousebutton}
+    if ($checker -eq $retryTime -and $inputtype -eq "enter"){$wshell.SendKeys('~')}
+    if ($checker -gt $failTime){$global:errorcount ++
+                          debug-error -processes $global:processes
+                          }
+   }
+Until($result.red -eq $red -and $result.green -eq $green -and $result.blue -eq $blue)
+
+}
+
+function global:Initialize-Sleep
+{param([int]$seconds,[string]$texttodisplay)
+
+$global:labeltask.text = "$texttodisplay for"
+$global:labelTime.text = "$seconds seconds"
+$global:form.Refresh()
+Start-Sleep $seconds
+}
+
+function global:Write-Logtime
+{param([TimeSpan]$time,[string]$taskname)
+    $users = query user
+    $userscount = ($users.count - 1)
+    $timeinsecs=[math]::Round($time.totalseconds / 1.00,2)
+    $TimeAdd = New-Object PSObject -property @{action=$taskname;Duration=$timeinsecs;username=$env:username;Time=Get-Date;Users=$userscount}
+    $TimeAdd | export-csv c:\temp\timing.csv -Append -NoTypeInformation
+}
+
+function global:Start-Task
+{param([string]$labeltext,[string]$taskname,[int]$x,[int]$y,[int]$red,
+       [int]$green,[int]$blue,[string]$inputtype,[string]$cursorpos,
+       [int]$sleep,[string]$collecttime,[string]$checkcolour)
+
+                            $global:labeltask.text =  $labeltext
+                            $global:form.Refresh()
+                            
+                            $time = Measure-Command{
+                                                            if($inputtype -eq "click"){ 
+                                                                                        [Windows.Forms.Cursor]::position = $cursorpos
+                                                                                        pop-mousebutton
+                                                                                        }
+                                                            if($inputtype -eq "enter"){$wshell.SendKeys('~')}
+                                                            Start-Sleep 1
+                                                            if($checkcolour -ne "No")
+                                                            {
+                                                            trace-colour -x $x -y $y -red $red -green $green -blue $blue -inputtype $inputtype}
+                                                            }
+                            if ($Collecttime -eq "yes"){
+                                                        write-logtime -time $time -taskname $taskname
+                                                        }
+                            initialize-sleep -seconds $sleep -texttodisplay "Thinking" 
+                            exit-session
+}
+
+function global:exit-session
 {
 
 $global:TestEnd = Test-Path -Path $filestore\status\endtest.txt
@@ -247,35 +249,38 @@ initialize-sleep -seconds 15 -texttodisplay "Test Ending"
 Logoff}
 }
 
-Function debug-error
+function global:debug-error
 {param([string]$processes="chrome")
 
     exit-session
     $date = (Get-Date -format filedatetime)
     #Close Session
     if($errorcount -eq 3){
-                            Get-Screenie $bounds "$filestore\errors\$env:username$date.jpg"
+                            Get-Screenie -path "$filestore\errors\$env:username$date.jpg"
                             new-item $filestore\status\endtest.txt
                             exit-session
                             }
     Else{
             
-            foreach($procs in $processes){get-process -name $proc -ErrorAction SilentlyContinue | Where-Object {$_.CPU} | stop-process}
+            foreach($procs in $global:processes){get-process -name $procs -ErrorAction SilentlyContinue | Where-Object {$_.CPU} | stop-process}
             start-test
             }
 }
 
-Function Start-Typing
+function global:Start-Typing
 {param([string]$sentence, [int]$delay)
 $array = $sentence.toCharArray()
+$functwshell = New-Object -ComObject wscript.shell;
 
-foreach($letter in $array){
-                            $wshell.SendKeys($letter)
+foreach($letter in $array){ #Wait-Debugger
+                            $functwshell.SendKeys($letter)
                             Start-Sleep -Milliseconds $delay
                             }
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($functwshell) | Out-Null
 }
 
-function Start-FeedbackForm {
+function global:Start-FeedbackForm 
+{
     #region feedbackForm
     $global:form = New-Object Windows.Forms.Form
     $global:form.Location = New-Object System.Drawing.Point(10,700);

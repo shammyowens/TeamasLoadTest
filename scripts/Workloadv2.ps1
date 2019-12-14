@@ -2,16 +2,14 @@
 
 Add-Type -AssemblyName System.Windows.Forms
 $wshell = New-Object -ComObject wscript.shell;
-$global:processes = ("Chrome, Notepad")
+$global:processes = ("Chrome", "Notepad")
 $filestore = "FILESERVER"
 Import-Module "$filestore\scripts\WorkloadFunctions.psm1"
-$retryTime = 30
-$failTime = 60
 
 #endregion scriptSetup
 
 #region testFunctions
-Function initialize-session
+Function global:initialize-session
 {
 
 start-process chrome -WindowStyle Maximized
@@ -26,7 +24,7 @@ get-process -name chrome | Where-Object {$_.CPU} | stop-process
 
 }
 
-Function Start-Test
+Function global:Start-Test
 {
 Do {
         exit-session
@@ -83,7 +81,6 @@ Do {
     }
 Until ($global:testend -eq "$True")
 }
-
 
 Start-FeedbackForm
 

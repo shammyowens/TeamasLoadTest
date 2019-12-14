@@ -18,15 +18,14 @@ $filestore =(get-item $loc).parent.FullName
 
 $password = Read-Host -Prompt "what is the password"
 Set-Location $filestore
+new-item -Path "$filestore\status\$env:computername.txt"
 
 Do{ 
     write-host "Checking for Start Test"
     $startTest = Test-Path -path "$filestore\status\startTest.csv"
-    $launcherPresent = Test-Path -path "$filestore\status\$env:computername.txt"
-
-    Start-Sleep 5
+    Start-Sleep 1
 }
-Until($startTest -eq $true -and $launcherPresent -eq $true)
+Until($startTest -eq $true)
 
 
 cls
