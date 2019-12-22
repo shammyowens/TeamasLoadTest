@@ -19,17 +19,21 @@ I completed a presentation at the Winter 2019 UK Citrix User Group.  A copy of t
 ## Screenshots
 ![Control - Version 2.0 - Single Launcher](/images/controlv2.PNG)
 ![Control - Version 3.0 - Multi Launcher](/images/controlv3.png)
+![Control - Version 4.0 - Multi Launcher](/images/controlv4.png)
+
 
 [![Workload Script Demo](https://img.youtube.com/vi/c3H_ohaawik/hqdefault.jpg)](https://youtu.be/c3H_ohaawik)
 [![Control v1 Demo](https://img.youtube.com/vi/5daZJBRz8dQ/hqdefault.jpg)](https://youtu.be/5daZJBRz8dQ)
 [![Controlv2 Single Launcher Demo](https://img.youtube.com/vi/O75-CioVPW0/hqdefault.jpg)](https://youtu.be/O75-CioVPW0)
 [![Controlv3 Multi Launcher Demo](https://img.youtube.com/vi/9DdjbUW-kr4/hqdefault.jpg)](https://youtu.be/9DdjbUW-kr4)
+[![Controlv4 Multi Launcher Demo](https://img.youtube.com/vi/uTf_ibhPEZA/hqdefault.jpg)](https://youtu.be/uTf_ibhPEZA)
 
-
-## Technologies
+## Scripts & Version History
 * Control - version 1.0 - This is a simple PowerShell script to launch sessions
 * Control - version 2.0 - Single Launcher - This is a GUI PowerShell script to launch sessions
 * Control - version 3.0 - Multi Launcher -  This is a GUI PowerShell script to connect to separate launcher machines.
+* Control - version 4.0 - Multi Launcher -  This is a GUI PowerShell script to connect to separate launcher machines, functions are in ControlFunctions.psm1 file and provides feedback on Launcher status.
+
 * Colourpicker - version 1.0 - This is a GUI PowerShell script to get RGB colours from cursor position
 * Colourloop - version 1.0 - This is a PowerShell script return RGB values for a pixel and loop.  Useful for building workload scripts when page is refreshes.
 
