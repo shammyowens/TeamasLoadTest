@@ -17,16 +17,13 @@ This project was born out of need to do Non Functional Performance testing.  Our
 I completed a presentation at the Winter 2019 UK Citrix User Group.  A copy of this presentation can be found [here](/images/pres.pptx)
 
 ## Screenshots
-![Control - Version 2.0 - Single Launcher](/images/controlv2.PNG)
-![Control - Version 3.0 - Multi Launcher](/images/controlv3.png)
 ![Control - Version 4.0 - Multi Launcher](/images/controlv4.png)
 
-
 [![Workload Script Demo](https://img.youtube.com/vi/c3H_ohaawik/hqdefault.jpg)](https://youtu.be/c3H_ohaawik)
-[![Control v1 Demo](https://img.youtube.com/vi/5daZJBRz8dQ/hqdefault.jpg)](https://youtu.be/5daZJBRz8dQ)
-[![Controlv2 Single Launcher Demo](https://img.youtube.com/vi/O75-CioVPW0/hqdefault.jpg)](https://youtu.be/O75-CioVPW0)
-[![Controlv3 Multi Launcher Demo](https://img.youtube.com/vi/9DdjbUW-kr4/hqdefault.jpg)](https://youtu.be/9DdjbUW-kr4)
 [![Controlv4 Multi Launcher Demo](https://img.youtube.com/vi/uTf_ibhPEZA/hqdefault.jpg)](https://youtu.be/uTf_ibhPEZA)
+
+To view previous versions, see my channel on YouTube
+https://www.youtube.com/playlist?list=PL2EN6uDanDrwVOXdehBUCBoWTw2jbyxhZ
 
 ## Scripts & Version History
 * Control - version 1.0 - This is a simple PowerShell script to launch sessions
