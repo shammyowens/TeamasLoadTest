@@ -4,7 +4,7 @@
 ## Table of contents
 * [General info](#general-info)
 * [Screenshots](#screenshots)
-* [Scripts & Version History](#Scripts & Version History)
+* [Scripts](#Scripts)
 * [Setup](#setup)
 * [Features](#features)
 * [Status](#status)
@@ -25,7 +25,7 @@ I completed a presentation at the Winter 2019 UK Citrix User Group.  A copy of t
 To view previous versions, see my channel on YouTube
 https://www.youtube.com/playlist?list=PL2EN6uDanDrwVOXdehBUCBoWTw2jbyxhZ
 
-## Scripts & Version History
+## Scripts
 * Control - version 1.0 - This is a simple PowerShell script to launch sessions
 * Control - version 2.0 - Single Launcher - This is a GUI PowerShell script to launch sessions
 * Control - version 3.0 - Multi Launcher -  This is a GUI PowerShell script to connect to separate launcher machines.
