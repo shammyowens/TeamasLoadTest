@@ -6,14 +6,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LoadTest"
         mc:Ignorable="d"
-        Title="Control Script Multi Launcher" Height="534.724" Width="821">
+        Title="Control Script Multi Launcher" Height="534.724" Width="1058">
     <Grid Margin="0,0,11,7">
         <TextBox Name="textVDAs" HorizontalAlignment="Left" Height="23" Margin="20,31,0,0" TextWrapping="Wrap" Text="vda1 vda2" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
         <TextBox Name="textLaunchers" HorizontalAlignment="Left" Height="23" Margin="20,80,0,0" TextWrapping="Wrap" Text="launcher1 launcher2 launcher3" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name="textUsers" HorizontalAlignment="Left" Height="23" Margin="20,127,0,0" TextWrapping="Wrap" Text="user01 user02 user03" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textUsers" HorizontalAlignment="Left" Height="23" Margin="20,127,0,0" TextWrapping="Wrap" Text="u01 u02 u03 u04 u05" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
         <TextBox Name="textDomain" HorizontalAlignment="Left" Height="23" Margin="20,176,0,0" TextWrapping="Wrap" Text="Contoso" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
         <TextBox Name="textDesktop" HorizontalAlignment="Left" Height="23" Margin="20,225,0,0" TextWrapping="Wrap" Text="Desktop" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name="textStorefrontURL" HorizontalAlignment="Left" Height="23" Margin="20,274,0,0" TextWrapping="Wrap" Text="https://storefront.contoso.com/Citrix/StorefrontWeb/" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textStorefrontURL" HorizontalAlignment="Left" Height="23" Margin="20,274,0,0" TextWrapping="Wrap" Text="https://storefront.contoso.com/Citrix/StoreFrontWeb/" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
         <TextBox Name ="textDelay" HorizontalAlignment="Left" Height="23" Margin="20,323,0,0" TextWrapping="Wrap" Text="90" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
         <TextBox Name ="textFileShare" HorizontalAlignment="Left" Height="23" Margin="20,372,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
 
@@ -27,16 +27,20 @@
         <Label Content="Storefront URL" HorizontalAlignment="Left" Margin="20,248,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Button Name="buttonStart" Content="Start Test" HorizontalAlignment="Left" Margin="380,461,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
         <Button Name="buttonStop" Content="Stop Test" HorizontalAlignment="Left" Margin="468,461,0,0" VerticalAlignment="Top" Width="75" Height="25" Visibility="Hidden" />
-        <ListView Name="listViewSessions" HorizontalAlignment="Left" Height="297" Margin="380,148,0,0" VerticalAlignment="Top" Width="404">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Username" Width="100" DisplayMemberBinding ="{Binding Username}"/>
-                    <GridViewColumn Header="Login Time" Width="200" DisplayMemberBinding ="{Binding LoginTime}"/>
-                    <GridViewColumn Header="Server" Width="100" DisplayMemberBinding ="{Binding Server}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ProgressBar Name="pbProgress" HorizontalAlignment="Left" Height="23" Margin="380,104,0,0" VerticalAlignment="Top" Width="404"/>
+        
+
+<DataGrid Name="DataGridSessions" HorizontalAlignment="Left" Height="297" Margin="380,148,0,0" VerticalAlignment="Top" Width="404">
+	<DataGrid.Columns>
+        </DataGrid.Columns>
+    </DataGrid>
+
+<DataGrid Name="DataGridLaunchers" HorizontalAlignment="Left" Height="297" Margin="805,148,0,0" VerticalAlignment="Top" Width="224">
+            <DataGrid.Columns>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        
+        <ProgressBar Name="pbProgress" HorizontalAlignment="Left" Height="23" Margin="380,104,0,0" VerticalAlignment="Top" Width="649"/>
         <Label Content="Launch Session Delay (seconds)" HorizontalAlignment="Left" Margin="20,297,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Label Content="Current Status" HorizontalAlignment="Left" Margin="380,28,0,0" VerticalAlignment="Top" Width="404" Height="23"/>
         <Label Name="labelTestRunning" Content="No Active Test" HorizontalAlignment="Left" Margin="380,54,0,0" VerticalAlignment="Top" Width="170"/>
@@ -44,6 +48,7 @@
         <Label Content="File Share" HorizontalAlignment="Left" Margin="20,346,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Label Content="Workload Script" HorizontalAlignment="Left" Margin="20,395,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Label Content="Launcher Machines (separated by a space)" HorizontalAlignment="Left" Margin="20,54,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
+        
 
     </Grid>
 </Window>

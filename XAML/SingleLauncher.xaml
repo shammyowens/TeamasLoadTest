@@ -8,17 +8,18 @@
         mc:Ignorable="d"
         Title="Control Script Single Launcher" Height="544.724" Width="810.00">
     <Grid Margin="0,0,2,1">
-        <TextBox Name="textVDAs" HorizontalAlignment="Left" Height="23" Margin="20,31,0,0" TextWrapping="Wrap" Text="vda1" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name="textUsers" HorizontalAlignment="Left" Height="23" Margin="20,80,0,0" TextWrapping="Wrap" Text="user01 user02 user03" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <PasswordBox Name="pwPassword" HorizontalAlignment="Left" Margin="20,128,0,0" VerticalAlignment="Top" Width="302" Height="23" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name="textDomain" HorizontalAlignment="Left" Height="23" Margin="20,177,0,0" TextWrapping="Wrap" Text="Contoso" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name="textDesktop" HorizontalAlignment="Left" Height="23" Margin="20,226,0,0" TextWrapping="Wrap" Text="Desktop" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name="textStorefrontURL" HorizontalAlignment="Left" Height="23" Margin="20,275,0,0" TextWrapping="Wrap" Text="https://storefront.contoso.com/Citrix/StorefrontWeb/" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name ="textDelay" HorizontalAlignment="Left" Height="23" Margin="20,324,0,0" TextWrapping="Wrap" Text="90" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <TextBox Name ="textFileShare" HorizontalAlignment="Left" Height="23" Margin="20,373,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-<!--<Button Name ="buttonFileShare" Content="..." HorizontalAlignment="Left" Height="23" Margin="327,373,0,0" VerticalAlignment="Top" Width="27"/>-->
-        <TextBox Name ="textWorkload" HorizontalAlignment="Left" Height="23" Margin="20,422,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
-        <Button Name="buttonWorkload" Content="..." HorizontalAlignment="Left" Height="23" Margin="327,422,0,0" VerticalAlignment="Top" Width="27"/>
+        <TextBox Name="textVDAs" HorizontalAlignment="Left" Height="23" Margin="20,31,0,0" TextWrapping="Wrap" Text="vda1 vda2" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textLaunchers" HorizontalAlignment="Left" Height="23" Margin="20,80,0,0" TextWrapping="Wrap" Text="launcher1 launcher2 launcher3" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textUsers" HorizontalAlignment="Left" Height="23" Margin="20,127,0,0" TextWrapping="Wrap" Text="u01 u02 u03 u04 u05" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textDomain" HorizontalAlignment="Left" Height="23" Margin="20,176,0,0" TextWrapping="Wrap" Text="Contoso" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textDesktop" HorizontalAlignment="Left" Height="23" Margin="20,225,0,0" TextWrapping="Wrap" Text="Desktop" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name="textStorefrontURL" HorizontalAlignment="Left" Height="23" Margin="20,274,0,0" TextWrapping="Wrap" Text="https://storefront.contoso.com/Citrix/StoreFrontWeb/" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name ="textDelay" HorizontalAlignment="Left" Height="23" Margin="20,323,0,0" TextWrapping="Wrap" Text="90" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        <TextBox Name ="textFileShare" HorizontalAlignment="Left" Height="23" Margin="20,372,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+
+        <TextBox Name ="textWorkload" HorizontalAlignment="Left" Height="23" Margin="20,421,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="302" RenderTransformOrigin="0.5,0.5"/>
+        
+<Button Name="buttonWorkload" Content="..." HorizontalAlignment="Left" Height="23" Margin="327,422,0,0" VerticalAlignment="Top" Width="27"/>
         <CheckBox Name="checkPerfmon" Content="Collect Perfmon?" HorizontalAlignment="Left" Margin="20,466,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5"/>
         <Label Content="Usernames (separated by a space)" HorizontalAlignment="Left" Margin="20,54,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Label Content="VDA names (separated by a space)" HorizontalAlignment="Left" Margin="20,5,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>

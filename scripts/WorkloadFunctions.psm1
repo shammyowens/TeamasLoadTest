@@ -1,4 +1,4 @@
-$filestore = "FILESERVER"
+$global:filestore = "FILESERVER"
 $retryTime = 10
 $failTime = 20
 
@@ -242,7 +242,7 @@ function global:Start-Task
 function global:exit-session
 {
 
-$global:TestEnd = Test-Path -Path $filestore\status\endtest.txt
+$global:TestEnd = Test-Path -Path $global:filestore\status\endtest.txt
 If ($global:testend -eq "$True"){
 
 initialize-sleep -seconds 15 -texttodisplay "Test Ending"
@@ -256,8 +256,8 @@ function global:debug-error
     $date = (Get-Date -format filedatetime)
     #Close Session
     if($errorcount -eq 3){
-                            Get-Screenie -path "$filestore\errors\$env:username$date.jpg"
-                            new-item $filestore\status\endtest.txt
+                            Get-Screenie -path "$global:filestore\errors\$env:username$date.jpg"
+                            new-item $global:filestore\status\endtest.txt
                             exit-session
                             }
     Else{
