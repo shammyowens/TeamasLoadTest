@@ -1,5 +1,3 @@
-#File is partly based on https://github.com/1RedOne/BlogPosts/blob/master/GUI%20Part%20V/PowerShell_GUI_Template.ps1
-
 #region Add Types
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
@@ -84,15 +82,13 @@ $psCmd = [PowerShell]::Create().AddScript({
 
     $syncHash.textDomain.Text = $env:USERDOMAIN
     $syncHash.textFileShare.Text = (Get-Location) | ForEach-Object{$_.ProviderPath}
-    $global:hidecontrols=("textVDAs","textLaunchers","textUsers","textDomain","textDesktop","textStorefrontURL","textDelay","textWorkload","textFileshare")
-    
     #region Workload Button
     
     $syncHash.buttonWorkload.Add_Click({
                                             $FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ 
                                             InitialDirectory = (Get-Location) | ForEach-Object{$_.ProviderPath}
                                             Multiselect = $false
-                                            Filter = 'Poweshell (*.PS1)|*.PS1'
+                                            Filter = 'Powershell (*.PS1)|*.PS1'
                                         }
     $null = $FileBrowser.ShowDialog()
 
@@ -134,33 +130,28 @@ $psCmd = [PowerShell]::Create().AddScript({
                                     },
                 "Normal"
             )
-            $intDelay = [int]$script:Delay
-            $global:date = (Get-Date -format filedatetime)
-    import-module $script:filestore\scripts\ControlFunctions.psm1       
+            
+    $global:date = (Get-Date -format filedatetime)
+    import-module $script:filestore\scripts\ControlFunctions.psm1
+    Write-Log -StartNew -Path $script:filestore\logs\$global:date-log.text
+    Write-Log -Message "Start Button Clicked" -Level Info -Path $script:filestore\logs\$global:date-log.text
     $filestore = $script:FileStore
     set-location $filestore   
-                                          
-    If((get-location | ForEach-Object{$_.ProviderPath}) -match ":")
-    {
-    update-window -Control labelTestRunning -Property Content -Value "Please run from a FileShare!"
-    Get-Runspace -name "StartTest" | ForEach-Object {$_.dispose()}
-    Exit
-    }
-    Inspect-Inputs
-   
-    #Wait-Debugger
 
+    Test-Inputs -delay $script:Delay -filestore $script:filestore -storefrontURL $script:StorefrontURL
+    $script:intDelay = [int]$script:Delay
+   
     Watch-LauncherStatus -filestore $script:filestore -launchers $script:Launchers -launcherscount $script:Launchers.count
 
     If($script:perfmon -eq $true){Start-Perfmon -date $global:date -VDAs $Script:VDAs -filestore $script:filestore}
                                   
-    Start-ProgressBar -intDelay $intDelay -UserCount $Script:Users.count -filestore $script:filestore
+    Start-ProgressBar -intDelay $script:intDelay -UserCount $Script:Users.count -filestore $script:filestore
 
-    publish-test -date $global:date -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload -desktop $script:Desktop -delay $script:Delay -storefrontURL $script:StorefrontURL -users $Script:Users
+    publish-test -date $global:date -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload -desktop $script:Desktop -intdelay $script:intDelay -storefrontURL $script:StorefrontURL -users $Script:Users
 
     Start-SessionInfo -VDAs $Script:VDAs -filestore $script:filestore
 
-    Watch-TestStatus -filestore $script:filestore -launchers $script:Launchers -delay $script:delay
+    Watch-TestStatus -filestore $script:filestore -launchers $script:Launchers -delay $script:intDelay
     
     Unpublish-test -date $global:date -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload               
 
@@ -205,7 +196,8 @@ $psCmd = [PowerShell]::Create().AddScript({
             )
          
         $filestore = $script:filestore
-        import-module $script:filestore\scripts\ControlFunctions.psm1       
+        import-module $script:filestore\scripts\ControlFunctions.psm1
+        Write-Log -Message "Stop Button Clicked" -Level Info -Path $script:filestore\logs\$global:date-log.text
         Get-Runspace -name "StartTest" | ForEach-Object {$_.dispose()} 
         unpublish-test -date $global:date -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload
         
@@ -229,7 +221,8 @@ $psCmd = [PowerShell]::Create().AddScript({
 
         #Stop all runspaces
         $jobCleanup.PowerShell.Dispose()  
-        Get-Runspace | Where-Object {$_.id -ne 1} | ForEach-Object {$_.dispose()}    
+        Get-Runspace | Where-Object {$_.id -ne 1} | ForEach-Object {$_.dispose()}
+        Write-Log -Message "Program Close" -Level Info -Path $script:filestore\logs\$global:date-log.text
     })
     #endregion Window Close 
     $syncHash.Window.ShowDialog() | Out-Null
