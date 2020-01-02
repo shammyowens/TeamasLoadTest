@@ -1,36 +1,27 @@
 Function publish-test{Param([string]$date,[string]$filestore,[string[]]$launchers,[string[]]$VDAs,[string]$workload,[string]$desktop,[int]$intdelay,[string]$storefrontURL,[string[]]$users)
-    Write-Log -Message "Publish Test invoked" -Level Info -Path $script:filestore\logs\$date-log.text
+    Write-Log -Message "Publish Test invoked" -Level Info -Path $script:filestore\logs\event.log
     Get-Runspace -name "sessionInfo" | ForEach-Object {$_.dispose()} 
     update-window -Control LabelTestRunning -Property Content -Value "Test Started"
       
  Try{
      ((Get-Content -path $filestore\scripts\start.bat) -replace "FILESERVER",$Workload) | Set-Content -Path $filestore\scripts\start.bat -ErrorAction Stop
      ((Get-Content -path $filestore\scripts\WorkloadFunctions.psm1) -replace "FILESERVER",$filestore) | Set-Content -Path $filestore\scripts\WorkloadFunctions.psm1 -ErrorAction Stop
+     ((Get-Content -path $filestore\scripts\launcher.ps1) -replace "FILESERVER",$filestore) | Set-Content -Path $filestore\scripts\launcher.ps1 -ErrorAction Stop
      ((Get-Content -path $Workload) -replace "FILESERVER",$filestore) | Set-Content -Path $Workload -ErrorAction Stop
     }
  Catch
-     {
-     [System.Windows.Forms.MessageBox]::Show("Cannot Amend workload files")
-     Write-Log -Message "Cannot Amend workload Files" -Level Info -Path $script:filestore\logs\$date-log.text
-     exit
-     ]}
+     {Send-Error -msg "Cannot amend workload files" -log "Cannot amend workload files" -date $date}
  
      $endtest = Test-Path -path $filestore\status\endtest.txt
      If($endtest -eq $true){Remove-Item -path $filestore\status\endtest.txt}
  
  Try{
      Foreach($server in $VDAs){
-                                Copy-item -Path "$filestore\Scripts\start.bat" -Destination "\\$server\c$\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp"
-                                $ctemp = Test-Path "\\$server\c$\temp"
-                                if($ctemp -eq $false){New-Item -name temp -Path \\$server\c$\ -ItemType Directory}
+                                Copy-item -Path "$filestore\Scripts\start.bat" -Destination "\\$server\c$\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp" -ErrorAction stop
                                 Remove-item "\\$server\c$\temp\timing.csv"
                                }
      }
- Catch{
-     [System.Windows.Forms.MessageBox]::Show("Cannot Prepare VDAs")
-     Write-Log -Message "Cannot Prepare VDAs" -Level Info -Path $script:filestore\logs\$date-log.text
-     exit
-     }
+ Catch{Send-Error -msg "Cannot amend VDA $server" -log "Cannot amend VDA $server" -date $date}
  
  
  $launcherdelay = 0
@@ -58,11 +49,11 @@ Function publish-test{Param([string]$date,[string]$filestore,[string[]]$launcher
  
  $launch | export-csv "$filestore\status\startTest.csv" -NoTypeInformation
  
- Write-Log -Message "Test Published" -Level Info -Path $script:filestore\logs\$date-log.text
+ Write-Log -Message "Test Published" -Level Info -Path $script:filestore\logs\event.log
  }
 
 Function Unpublish-test {Param([string]$date,[string]$filestore,[string[]]$launchers,[string[]]$VDAs,[string]$workload)
-    Write-Log -Message "Unpublish Test Invoked" -Level Info -Path $script:filestore\logs\$date-log.text
+    Write-Log -Message "Unpublish Test Invoked" -Level Info -Path $script:filestore\logs\event.log
     new-Item -path $filestore\status\endtest.txt -ItemType File
     remove-item $filestore\status\starttest.csv
     remove-item $filestore\status\templaunch.csv
@@ -77,7 +68,8 @@ Function Unpublish-test {Param([string]$date,[string]$filestore,[string[]]$launc
     $replace = $filestore -replace "\\","\\"
     $replaceWL = $workload -replace "\\","\\"
     ((Get-Content -path $filestore\scripts\start.bat) -replace $replaceWL,"FILESERVER") | Set-Content -Path $filestore\scripts\start.bat -ErrorAction Stop
-    ((Get-Content -path $filestore\scripts\workloadfunctions.psm1) -replace $replace,"FILESERVER") | Set-Content -Path $filestore\scripts\workloadfunctions.psm1 -ErrorAction Stop
+    ((Get-Content -path $filestore\scripts\workloadfunctions.psm1) -replace $replace,"FILESERVER") | Set-Content -Path $filestore\scripts\workloadfunctions.psm1 -ErrorAction 
+    ((Get-Content -path $filestore\scripts\launcher.ps1) -replace $replace,"FILESERVER") | Set-Content -Path $filestore\scripts\launcher.ps1 -ErrorAction Stop
     ((Get-Content -path $workload) -replace $replace,"FILESERVER") | Set-Content -Path $workload -ErrorAction Stop
 
    Get-Runspace -name "progressbar" | ForEach-Object {$_.dispose()}
@@ -92,7 +84,7 @@ Function Unpublish-test {Param([string]$date,[string]$filestore,[string[]]$launc
    Set-WindowControls -Instruction "stop"
 
    Get-ChildItem $filestore\status | Where-Object {$_.name -ne "endtest.txt"} | Remove-Item -Force
-   Write-Log -Message "Test Unpublished" -Level Info -Path $script:filestore\logs\$date-log.text
+   Write-Log -Message "Test Unpublished" -Level Info -Path $script:filestore\logs\event.log
 }  
 
 #https://learn-powershell.net/2012/10/14/powershell-and-wpf-writing-data-to-a-ui-from-a-different-runspace/
@@ -450,7 +442,6 @@ Param([string[]]$VDAs,[string]$filestore)
 
  do{
      $script:sessionAdd = @()
-                                #$syncHash.Window.Dispatcher.invoke([action]{$synchash.DataGridSessions.itemssource = $script:sessionAdd},"Normal")      
     foreach($server in $VDAs){
                                 
                                 $sessions = Get-LoggedOnUsers -server $server
@@ -480,49 +471,61 @@ until($p -eq 100)
         }
 
 Function Test-Inputs{
+[CmdletBinding()]
 Param([string]$date,[string]$filestore,[string[]]$launchers,[string[]]$VDAs,[string]$workload,[string]$desktop,[string]$delay,[string]$storefrontURL,[string[]]$users)
+    
+    #https://config9.com/windows/powershell/getting-all-named-parameters-from-powershell-including-empty-and-set-ones/
+    # Get the command name
+    $CommandName = $PSCmdlet.MyInvocation.InvocationName;
+    # Get the list of parameters for the command
+    $ParameterList = (Get-Command -Name $CommandName).Parameters;
+    foreach ($item in $ParameterList.keys)
+    {
+        if($item -eq "ErrorAction" -or $item -eq "ErrorVariable" -or $item -eq "WarningAction" -or $item -eq "WarningVariable" -or $item -eq "InformationVariable" -or $item -eq "InformationAction" -or $item -eq "OutVariable" -or $item -eq "OutBuffer" -or $item -eq "PipelineVariable" -or $item -eq "Debug" -or $item -eq "Verbose"){Continue}
+        $var = Get-Variable -Name $item -ErrorAction SilentlyContinue;
+        if(!$var.Value)
+        {
+            Send-Error -msg "$item field is empty" -log "$item field is empty" -date $date
+       }
+    }
 
+$ErrorActionPreference = "Stop"
 #Foreach VDA in VDAs, check that the VDA is a computer somehow?
+foreach($VDA in $VDAs)
+                    {
+                        Try{Resolve-DnsName $VDA}
+                        Catch{Send-Error -msg "Cannot resolve VDA $VDA, is the name correct?" -log "DNS resolution for VDA $VDA failed" -date $date}
+                    }
+
 #foreach launcher, check that it is a computer
+foreach($launcher in $Launchers)
+                    {
+                        Try{Resolve-DnsName $launcher}
+                        Catch{Send-Error -msg "Cannot resolve launcher $launcher, is the name correct?" -log "DNS resolution for launcher $launcher failed" -date $date}
+                    }
 
 #test filestore
 Set-Location -Path $filestore
-If((get-location - | ForEach-Object{$_.ProviderPath}) -match ":")
-    {
-    update-window -Control labelTestRunning -Property Content -Value "Please run from a FileShare!"
-    Write-Log -Message "Not Running from Fileshare" -Level Error -Path $script:filestore\logs\$date-log.text
-    Get-Runspace -name "StartTest" | ForEach-Object {$_.dispose()}
-    Exit
-    }
+If((get-location | ForEach-Object{$_.ProviderPath}) -match ":"){Send-Error -msg "Please run from a FileShare!" -log "Not Running from Fileshare" -date $date}
 
 #test delay is a number
-Try{$script:intDelay = [int]$script:Delay}
-            Catch{
-                [System.Windows.Forms.MessageBox]::Show("Delay is not a number")
-                Write-Log -Message "Delay is not a number" -Level Info -Path $script:filestore\logs\$date-log.text
-                Get-Runspace -name "StartTest" | ForEach-Object {$_.dispose()}
-                Exit
-                }
+Try{[int]$script:Delay = $Delay}
+            Catch{Send-Error -msg "Delay is not a number" -log "Delay is not a number" -date $date}
+
 
 #check storefront URL is valid
 #test it is actually an accesible URL
 Try{$output = invoke-webrequest $storefrontURL | ForEach-Object{$_.RawContent}}
-                Catch{
-                [System.Windows.Forms.MessageBox]::Show("Is the Storefront URL and proper URL and site accesible?")
-                Write-Log -Message "StorefrontURL is not a valid URL or website is not accesible" -Level Info -Path $script:filestore\logs\$date-log.text
-                Get-Runspace -name "StartTest" | ForEach-Object {$_.dispose()}
-                Exit
-                    }
+                Catch{Send-Error -msg "Is the Storefront URL and proper URL and site accessible?" -log "StorefrontURL is not a valid URL or website is not accessible" -date $date}
+        
 #Test that the URL is citrix storefront/netscaler
-if($output -notmatch "citrix")
-                            {
-                            [System.Windows.Forms.MessageBox]::Show("Is the URL for Citrix StoreFront?")
-                            Write-Log -Message "StorefrontURL is a valid URL, but not a StoreFront site" -Level Info -Path $script:filestore\logs\$date-log.text
-                            Get-Runspace -name "StartTest" | ForEach-Object {$_.dispose()}
-                            Exit
-                            }
+if($output -notmatch "citrix"){Send-Error -msg "Is the URL for Citrix StoreFront?" -log "StorefrontURL is a valid URL, but not a StoreFront site" -date $date}
 
 #check users
+foreach($user in $users){
+                                If(!([adsisearcher]"samaccountname=$user").findone())
+                                {Send-Error -msg "Cannot find user $user in AD, is the name correct?" -log "AD lookup for user $user failed" -date $date}
+                        }
 
 #After everything is tested, disable window controls
 Set-WindowControls -Instruction "start"
@@ -618,8 +621,14 @@ Function Set-WindowControls{
             $syncHash.textWorkload.Opacity = $opacity
                             },
         "Normal")
+}
 
+Function Send-Error{
+    Param([string]$msg,[string]$log,[string]$date)
 
-
-
+    [System.Windows.Forms.MessageBox]::Show($msg)
+    Write-Log -Message $log -Level Error -Path $script:filestore\logs\event.log
+    Get-Runspace -name "StartTest" | ForEach-Object {$_.dispose()}
+    Exit
+    
 }

@@ -1,5 +1,5 @@
 <Window x:Class="LoadTest.MainWindow"
-        Topmost="True"
+        Topmost="False"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,19 +27,19 @@
         <Label Content="Storefront URL" HorizontalAlignment="Left" Margin="20,248,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Button Name="buttonStart" Content="Start Test" HorizontalAlignment="Left" Margin="380,461,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
         <Button Name="buttonStop" Content="Stop Test" HorizontalAlignment="Left" Margin="468,461,0,0" VerticalAlignment="Top" Width="75" Height="25" Visibility="Hidden" />
-        
 
-<DataGrid Name="DataGridSessions" HorizontalAlignment="Left" Height="297" Margin="380,148,0,0" VerticalAlignment="Top" Width="404">
-	<DataGrid.Columns>
-        </DataGrid.Columns>
-    </DataGrid>
 
-<DataGrid Name="DataGridLaunchers" HorizontalAlignment="Left" Height="297" Margin="805,148,0,0" VerticalAlignment="Top" Width="224">
+        <DataGrid Name="DataGridSessions" HorizontalAlignment="Left" Height="297" Margin="380,148,0,0" VerticalAlignment="Top" Width="404">
             <DataGrid.Columns>
             </DataGrid.Columns>
         </DataGrid>
-        
-        
+
+        <DataGrid Name="DataGridLaunchers" HorizontalAlignment="Left" Height="297" Margin="805,148,0,0" VerticalAlignment="Top" Width="224">
+            <DataGrid.Columns>
+            </DataGrid.Columns>
+        </DataGrid>
+
+
         <ProgressBar Name="pbProgress" HorizontalAlignment="Left" Height="23" Margin="380,104,0,0" VerticalAlignment="Top" Width="649"/>
         <Label Content="Launch Session Delay (seconds)" HorizontalAlignment="Left" Margin="20,297,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Label Content="Current Status" HorizontalAlignment="Left" Margin="380,28,0,0" VerticalAlignment="Top" Width="404" Height="23"/>
@@ -48,7 +48,9 @@
         <Label Content="File Share" HorizontalAlignment="Left" Margin="20,346,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Label Content="Workload Script" HorizontalAlignment="Left" Margin="20,395,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
         <Label Content="Launcher Machines (separated by a space)" HorizontalAlignment="Left" Margin="20,54,0,0" VerticalAlignment="Top" Width="257" RenderTransformOrigin="0.5,0.5"/>
-        
+        <Label Name="labelSessionStatus" Content="Session Status" HorizontalAlignment="Left" Margin="380,127,0,0" VerticalAlignment="Top" Width="170"/>
+        <Label Name="labelLauncherStatus" Content="Launcher Status" HorizontalAlignment="Left" Margin="805,127,0,0" VerticalAlignment="Top" Width="170"/>
+
 
     </Grid>
 </Window>

@@ -368,6 +368,7 @@ try {
 }
 catch {
     Write-ToSFLauncherLog "Exception caught by script"
+    new-item -Path "FILESERVER\status\$env:computername-END.txt"
     $_.ToString() | Write-ToSFLauncherLog
     $_.InvocationInfo.PositionMessage | Write-ToSFLauncherLog
     throw $_

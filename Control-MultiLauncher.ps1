@@ -1,11 +1,14 @@
 #region Add Types
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
+import-module $script:filestore\scripts\ControlFunctions.psm1
 #endregion
 
 #region Environment Tests
 if((Get-WmiObject -Class Win32_ComputerSystem).PartOfDomain -eq $false){
     [System.Windows.Forms.MessageBox]::Show("This machine is not joined to a domain")
+    set-location logs
+    Write-Log -Message "This machine is not joined to a domain" -Level Error -Path "event.log"
 exit
 }
 #endregion
@@ -103,12 +106,14 @@ $psCmd = [PowerShell]::Create().AddScript({
 
     #region Start Button
     $syncHash.buttonStart.Add_Click({
-            $x+= "."
+        $global:testDate = (Get-Date -format filedatetime)    
+        $x+= "."
         $newRunspace =[runspacefactory]::CreateRunspace()
         $newRunspace.ApartmentState = "STA"
         $newRunspace.ThreadOptions = "ReuseThread"  
         $newRunspace.Name = "StartTest"        
         $newRunspace.Open()
+        $newRunspace.SessionStateProxy.SetVariable("testDate",$global:testDate) 
         $newRunspace.SessionStateProxy.SetVariable("SyncHash",$SyncHash) 
         $newRunspace.SessionStateProxy.SetVariable("jobs",$global:jobs)
         $PowerShell = [PowerShell]::Create().AddScript({
@@ -131,29 +136,29 @@ $psCmd = [PowerShell]::Create().AddScript({
                 "Normal"
             )
             
-    $global:date = (Get-Date -format filedatetime)
     import-module $script:filestore\scripts\ControlFunctions.psm1
-    Write-Log -StartNew -Path $script:filestore\logs\$global:date-log.text
-    Write-Log -Message "Start Button Clicked" -Level Info -Path $script:filestore\logs\$global:date-log.text
+    #Write-Log -StartNew -Path $script:filestore\logs\event.log
+    Write-Log -Message "Start Button Clicked" -Level Info -Path $script:filestore\logs\event.log
     $filestore = $script:FileStore
     set-location $filestore   
 
-    Test-Inputs -delay $script:Delay -filestore $script:filestore -storefrontURL $script:StorefrontURL
+    Test-Inputs -delay $script:Delay -filestore $script:filestore -storefrontURL $script:StorefrontURL -VDAs $script:VDAs -users $script:Users -launchers $script:launchers -date $testDate -workload $script:Workload -desktop $script:Desktop
+    
     $script:intDelay = [int]$script:Delay
    
     Watch-LauncherStatus -filestore $script:filestore -launchers $script:Launchers -launcherscount $script:Launchers.count
 
-    If($script:perfmon -eq $true){Start-Perfmon -date $global:date -VDAs $Script:VDAs -filestore $script:filestore}
+    If($script:perfmon -eq $true){Start-Perfmon -date $testDate -VDAs $Script:VDAs -filestore $script:filestore}
                                   
     Start-ProgressBar -intDelay $script:intDelay -UserCount $Script:Users.count -filestore $script:filestore
 
-    publish-test -date $global:date -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload -desktop $script:Desktop -intdelay $script:intDelay -storefrontURL $script:StorefrontURL -users $Script:Users
+    publish-test -date $testDate -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload -desktop $script:Desktop -intdelay $script:intDelay -storefrontURL $script:StorefrontURL -users $Script:Users
 
     Start-SessionInfo -VDAs $Script:VDAs -filestore $script:filestore
 
     Watch-TestStatus -filestore $script:filestore -launchers $script:Launchers -delay $script:intDelay
     
-    Unpublish-test -date $global:date -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload               
+    Unpublish-test -date $testDate -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload               
 
             })
         $PowerShell.Runspace = $newRunspace
@@ -177,7 +182,7 @@ $psCmd = [PowerShell]::Create().AddScript({
         $newRunspace.Open()
         $newRunSpace.name = "StopTest"
         $newRunspace.SessionStateProxy.SetVariable("SyncHash",$SyncHash) 
-        $newRunspace.SessionStateProxy.SetVariable("Date",$global:date) 
+        $newRunspace.SessionStateProxy.SetVariable("testDate",$global:testDate) 
         $PowerShell = [PowerShell]::Create().AddScript({
 
         $syncHash.Window.Dispatcher.invoke(
@@ -197,9 +202,9 @@ $psCmd = [PowerShell]::Create().AddScript({
          
         $filestore = $script:filestore
         import-module $script:filestore\scripts\ControlFunctions.psm1
-        Write-Log -Message "Stop Button Clicked" -Level Info -Path $script:filestore\logs\$global:date-log.text
+        Write-Log -Message "Stop Button Clicked" -Level Info -Path $script:filestore\logs\event.log
         Get-Runspace -name "StartTest" | ForEach-Object {$_.dispose()} 
-        unpublish-test -date $global:date -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload
+        unpublish-test -date $testDate -filestore $script:FileStore -launchers $script:Launchers -VDAs $script:VDAs -workload $script:Workload
         
 
         })
@@ -222,7 +227,7 @@ $psCmd = [PowerShell]::Create().AddScript({
         #Stop all runspaces
         $jobCleanup.PowerShell.Dispose()  
         Get-Runspace | Where-Object {$_.id -ne 1} | ForEach-Object {$_.dispose()}
-        Write-Log -Message "Program Close" -Level Info -Path $script:filestore\logs\$global:date-log.text
+        Write-Log -Message "Program Close" -Level Info -Path $script:filestore\logs\event.log
     })
     #endregion Window Close 
     $syncHash.Window.ShowDialog() | Out-Null
@@ -235,3 +240,5 @@ $data = $psCmd.BeginInvoke()
 #this is a hacky way of keeping the GUI open when run from Console
 #do{$something = 0}
 #until($something -eq 1)
+
+#Get-Runspace | Where-Object {$_.id -ne 1} | ForEach-Object {$_.dispose()}
